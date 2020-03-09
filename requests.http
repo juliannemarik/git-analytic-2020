@@ -1,0 +1,4 @@
+GET {{apiUrl}}/repos/juliannemarik/git-analytic-2020/commits
+
+
+GET /repos/:owner/:repo/commits
