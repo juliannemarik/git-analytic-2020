@@ -1,7 +1,8 @@
 export const scatterConfig = {
   chart: {
     type: 'scatter',
-    height: window.innerHeight - 128
+    height: window.innerHeight - 128,
+    zoomType: "xy"
   },
   legend: {
     enabled: false
