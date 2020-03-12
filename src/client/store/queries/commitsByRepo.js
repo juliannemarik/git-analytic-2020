@@ -3,11 +3,11 @@ export const commitsByRepo = `
     commitsByRepo(owner: $owner, repo: $repo){
       commit{
         message,
-        comment_count
-      },
-      committer{
-        login,
-        avatar_url
+        comment_count,
+        author {
+          name,
+          date
+        }
       },
       url
     }

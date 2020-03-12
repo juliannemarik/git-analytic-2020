@@ -25,13 +25,25 @@ const resolvers = {
 
     const queryParams = {
       per_page: 100,
-      ...(author && {author}),
-      ...(since && {since}),
-      ...(until && {until}),
+      ...(author && { author }),
+      ...(since && { since }),
+      ...(until && { until }),
     };
     const queryString = qs.stringify(queryParams);
 
     return axios.get(`${baseURL}/repos/${owner}/${repo}/commits?${queryString}`)
+      .then(response => get(response, 'data', []));
+  },
+  pullsByRepo: (args) => {
+    const { owner, repo, author } = args;
+
+    const queryParams = {
+      per_page: 100,
+      ...(author && { author })
+    };
+    const queryString = qs.stringify(queryParams);
+
+    return axios.get(`${baseURL}/repos/${owner}/${repo}/pulls?${queryString}`)
       .then(response => get(response, 'data', []));
   }
 };

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { commitsByRepoQuery } from './queries';
+import { commitsByRepoQuery, pullsByRepoQuery } from './queries';
 
 // ACTION TYPES
 const SET_OWNER = 'SET_OWNER'
@@ -54,25 +54,45 @@ export const fetchCommits = (owner, repo) => async dispatch => {
       }
     })
 
-    dispatch(setCommits(commitsByRepo))
-  } catch (err) {
-    console.error(err)
-  }
-}
-export const fetchCommitsByDate = (owner, repo, since, until) => async dispatch => {
-  try {
-    const {data: commits} = await axios.get(
-      `api/repos/${owner}/${repo}/commits/${since}/${until}`
-    )
-    dispatch(setCommits(commits))
+    const commitDataPoints = commitsByRepo.map(commit => {
+      const { commit: { author: { date } }} = commit;
+
+      const xAxisDate = (new Date (date)).getTime();
+      const hour = (new Date(date)).getHours();
+      const yAxisTime = new Date (Date.UTC(70, 0, 1, hour, 0, 0)).getTime();
+      return [ xAxisDate, yAxisTime ]
+    });
+
+    dispatch(setCommits(commitDataPoints))
   } catch (err) {
     console.error(err)
   }
 }
 export const fetchPulls = (owner, repo) => async dispatch => {
   try {
-    const {data: pulls} = await axios.get(`api/repos/${owner}/${repo}/pulls`)
-    dispatch(setPulls(pulls))
+    const { data: { data: { pullsByRepo } } } = await axios({
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      url: '/graphql',
+      data: {
+        query: pullsByRepoQuery,
+        variables: { owner, repo },
+      }
+    })
+
+    const pullDataPoints = pullsByRepo.map(commit => {
+      const { created_at: date } = commit;
+
+      const xAxisDate = (new Date (date)).getTime();
+      const hour = (new Date(date)).getHours();
+      const yAxisTime = new Date (Date.UTC(70, 0, 1, hour, 0, 0)).getTime();
+      return [ xAxisDate, yAxisTime ]
+    });
+
+    dispatch(setPulls(pullDataPoints))
   } catch (err) {
     console.error(err)
   }
