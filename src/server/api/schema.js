@@ -7,6 +7,7 @@ const schema = buildSchema(`
     userById(username: String): User,
     commitsByRepo(owner: String, repo: String, author: String, since: String, until: String): [Commit],
     pullsByRepo(owner: String, repo: String, author: String) : [Pull]
+    contributorsByRepo(owner: String, repo: String) : [User]
   }
 
   type Repo {
@@ -20,6 +21,7 @@ const schema = buildSchema(`
     login: String
     name: String
     avatar_url: String
+    contributions: Int
   }
 
   type Commit {

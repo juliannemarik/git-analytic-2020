@@ -10,6 +10,9 @@ export const scatterConfig = {
   title: {
     text: ''
   },
+  tooltip: {
+    enabled: false
+  },
   xAxis: {
     type: 'datetime',
     title: {
@@ -21,6 +24,14 @@ export const scatterConfig = {
     type: 'datetime',
     title: {
       text: 'Time',
+    }
+  },
+  plotOptions: {
+    scatter: {
+      marker: {
+        symbol: 'circle',
+        radius: 4
+      }
     }
   }
 }

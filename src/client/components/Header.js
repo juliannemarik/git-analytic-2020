@@ -26,10 +26,9 @@ class Header extends React.Component {
 
   handleSubmit = () => {
     const { repository, owner } = this.state
-    // const { commits, pulls, contributors } = this.props
     this.props.setOwner(owner)
     this.props.setRepository(repository)
-    // this.props.fetchContributors(owner, repository, contributors)
+    this.props.fetchContributors(owner, repository)
     this.props.fetchCommits(owner, repository)
     this.props.fetchPulls(owner, repository)
 }

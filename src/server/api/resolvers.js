@@ -45,6 +45,17 @@ const resolvers = {
 
     return axios.get(`${baseURL}/repos/${owner}/${repo}/pulls?${queryString}`)
       .then(response => get(response, 'data', []));
+  },
+  contributorsByRepo: (args) => {
+    const { owner, repo } = args;
+
+    const queryParams = {
+      per_page: 10,
+    };
+    const queryString = qs.stringify(queryParams);
+
+    return axios.get(`${baseURL}/repos/${owner}/${repo}/contributors?${queryString}`)
+      .then(response => get(response, 'data', []));
   }
 };
 

@@ -1,12 +1,15 @@
 // EXTERNAL IMPORTS
 import React from 'react'
-import dateFormat from 'dateformat'
+import {connect} from 'react-redux'
+import {
+  toggleCommits,
+  togglePulls,
+  resetDataVisibility
+} from '../store'
 
 // MATERIAL UI IMPORTS
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
-// import DateFnsUtils from '@date-io/date-fns'
-import { MuiPickersUtilsProvider, InlineDatePicker } from 'material-ui-pickers'
 import TextField from '@material-ui/core/TextField'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -18,20 +21,41 @@ import Avatar from '@material-ui/core/Avatar'
 
 class Footer extends React.Component {
   state = {
-    startDate: dateFormat(new Date(), 'isoUtcDateTime'),
-    endDate: dateFormat(new Date(), 'isoUtcDateTime'),
     display: 'all',
     contributorLogin: '',
     contributor: {}
   }
 
+  handleDisplayChange = event => {
+    this.setState({display: event.target.value})
+    if (event.target.value === 'all') {
+      this.props.resetDataVisibility()
+    } else if (event.target.value === 'commits') {
+      this.props.togglePulls(false)
+      this.props.toggleCommits(true)
+    } else if (event.target.value === 'pulls') {
+      this.props.toggleCommits(false)
+      this.props.togglePulls(true)
+    }
+  }
+
+  handleContributorChange = async event => {
+    const contributorObj = this.props.contributors.data.find(
+      contributor => contributor.login === event.target.value
+    )
+    await this.setState({
+      contributorLogin: event.target.value,
+      contributor: contributorObj
+    })
+  }
+
   render() {
-    const { classes } = this.props
+    const { classes, contributors } = this.props
     return (
       <div className={ classes.root }>
         <AppBar position="fixed" color="default" className={ classes.appBar }>
           <Toolbar className={ classes.toolbar }>
-            { !this.props.owner ? (
+            { this.props.owner ? (
               <React.Fragment>
                 <div className={classes.left}>
                   <RadioGroup
@@ -39,9 +63,7 @@ class Footer extends React.Component {
                     name="gender1"
                     className={ classes.radioGroup }
                     value={ this.state.display }
-                    onChange={() => {
-                      console.log('CHANGED')
-                    }}
+                    onChange={this.handleDisplayChange}
                   >
                     <FormControlLabel
                       value="all"
@@ -81,10 +103,10 @@ class Footer extends React.Component {
                         }`}
                         color="inherit"
                       >
-                        {`${this.state.contributor.totalCommits} COMMITS`}
+                        {`${this.state.contributor.contributions} COMMITS`}
                       </Typography>
                       <Avatar
-                        src={ this.state.contributor.avatar }
+                        src={ this.state.contributor.avatar_url }
                         className={ classes.avatar }
                       />
                     </React.Fragment>
@@ -111,7 +133,7 @@ class Footer extends React.Component {
                     margin="normal"
                   >
                     <option>CONTRIBUTORS</option>
-                    {[].map(contributor => (
+                    {contributors.data.map(contributor => (
                       <option key={contributor.login} value={contributor.login}>
                         {contributor.login}
                       </option>
@@ -126,6 +148,31 @@ class Footer extends React.Component {
         </AppBar>
       </div>
     )
+  }
+}
+
+const mapState = state => {
+  console.log("HERE", state.repos.contributors)
+  return {
+    owner: state.repos.owner,
+    repository: state.repos.repository,
+    commits: state.repos.commits,
+    pulls: state.repos.pulls,
+    contributors: state.repos.contributors
+  }
+}
+
+const mapDispatch = dispatch => {
+  return {
+    toggleCommits: visibility => {
+      dispatch(toggleCommits(visibility))
+    },
+    togglePulls: visibility => {
+      dispatch(togglePulls(visibility))
+    },
+    resetDataVisibility: () => {
+      dispatch(resetDataVisibility())
+    }
   }
 }
 
@@ -210,4 +257,4 @@ Footer.propTypes = {
   classes: PropTypes.object.isRequired
 }
 
-export default withStyles(styles)(Footer)
+export default withStyles(styles)(connect(mapState, mapDispatch)(Footer))

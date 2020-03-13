@@ -11,10 +11,16 @@ import { withStyles } from '@material-ui/core/styles'
 
 class ScatterPlot extends React.Component {
   render() {
-    const { classes } = this.props
+    const { classes, commits, pulls } = this.props
+    const commitsSeries = commits.visible ? { data: commits.data, color: "#0080FF", opacity: 0.5 } : undefined
+    const pullsSeries = pulls.visible ? { data: pulls.data, color: "#FFC423", opacity: 0.5 } : undefined
+
+    console.log("COM", commitsSeries)
+    console.log("PULL", pullsSeries)
+    console.log("TEST", [ commitsSeries, pullsSeries ].filter(Boolean))
     const chartOptions = {
       ...scatterConfig,
-      series: [ {...this.props.commits, color: "#0080FF", opacity: 0.5 }, { ...this.props.pulls, color: "#FFC423", opacity: 0.5 } ]
+      series: [ commitsSeries, pullsSeries ].filter(Boolean)
     }
     return (
       <div>

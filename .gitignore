@@ -1,1 +1,4 @@
 .envrc
+node_modules
+src/public/bundle.js
+src/public/bundle.js.map

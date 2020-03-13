@@ -1,5 +1,6 @@
-GET {{apiUrl}}/repos/d3/d3/pulls
-
+GET {{apiUrl}}/repos/juliannemarik/git-analytic/contributors
+Authorization: juliannemarik:{{GITHUB_OAUTH_TOKEN}}
 
 GET /repos/:owner/:repo/commits
 GET /repos/:owner/:repo/pulls
+GET /repos/:owner/:repo/stats/contributors

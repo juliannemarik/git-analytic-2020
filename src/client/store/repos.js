@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { commitsByRepoQuery, pullsByRepoQuery } from './queries';
+import { commitsByRepoQuery, contributorsByRepoQuery, pullsByRepoQuery } from './queries';
 
 // ACTION TYPES
 const SET_OWNER = 'SET_OWNER'
@@ -97,20 +97,22 @@ export const fetchPulls = (owner, repo) => async dispatch => {
     console.error(err)
   }
 }
-export const fetchPullsByDate = (owner, repo, since, until) => async dispatch => {
-  try {
-    const {data: pulls} = await axios.get(
-      `api/repos/${owner}/${repo}/pulls/${since}/${until}`
-    )
-    dispatch(setPulls(pulls))
-  } catch (err) {
-    console.error(err)
-  }
-}
 export const fetchContributors = (owner, repo) => async dispatch => {
   try {
-    const {data: contributors} = await axios.get(`api/repos/${owner}/${repo}/stats/contributors`)
-    dispatch(setContributors(contributors))
+    const { data: { data: { contributorsByRepo } } } = await axios({
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      url: '/graphql',
+      data: {
+        query: contributorsByRepoQuery,
+        variables: { owner, repo },
+      }
+    })
+
+    dispatch(setContributors(contributorsByRepo))
   } catch (err) {
     console.error(err)
   }
