@@ -34,7 +34,7 @@
     "graphql": "^14.6.0",
     "highcharts": "^8.0.4",
     "highcharts-react-official": "^3.0.0",
-    "i": "^0.3.6",
+    "i": "^0.3.7",
     "material-ui-pickers": "^2.2.4",
     "morgan": "^1.9.1",
     "nodemon": "^2.0.2",
